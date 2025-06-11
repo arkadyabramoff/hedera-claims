@@ -1,0 +1,105 @@
+(function() {
+
+    // Only do anything if jQuery isn't defined
+    if (typeof jQuery == 'undefined') {
+        thisPageUsingOtherJSLibrary = false;
+        if (typeof $ == 'function') {
+            // warning, global var
+            thisPageUsingOtherJSLibrary = true;
+        }
+
+        function getScript(url, success) {
+            var script = document.createElement('script');
+            script.src = url;
+
+            var head = document.getElementsByTagName('head')[0],
+                done = false;
+
+            // Attach handlers for all browsers
+            script.onload = script.onreadystatechange = function() {
+
+                if (!done && (!this.readyState || this.readyState == 'loaded' || this.readyState == 'complete')) {
+
+                    done = true;
+
+                    // callback function provided as param
+                    success();
+
+                    script.onload = script.onreadystatechange = null;
+                    head.removeChild(script);
+
+                };
+
+            };
+
+            head.appendChild(script);
+
+        };
+
+        getScript('/assets/scripts/jquery-3.6.0.min.js', function() {
+
+            if (typeof jQuery == 'undefined') {
+                // Super failsafe - still somehow failed...
+            } else {
+                // jQuery loaded! Make sure to use .noConflict just in case
+                //fancyCode();
+
+                if (thisPageUsingOtherJSLibrary) {
+                    // Run your jQuery Code
+
+                    setTimeout(initImageModal, 500);
+                } else {
+                    // Use .noConflict(), then run your jQuery Code
+
+                    setTimeout(initImageModal, 500);
+                }
+            }
+        });
+
+    } else { // jQuery was already loaded
+        // Run your jQuery Code
+        jQuery(document).ready(function(){
+            setTimeout(initImageModal, 500);
+        });
+    }
+
+    function initImageModal() {
+        let modalHTML = '<div class="image-modal-overlay" style="display:none;"></div><div class="image-modal-wrapper" style="display:none;"><div class="image-modal-table"><div class="image-modal-table-cell"><div class="image-modal"><div class="image-modal-close">X</div><img class="image-modal-image" src="" /></div></div></div></div>';
+
+        jQuery('body').append(modalHTML).queue(function(){
+        
+            jQuery('.image-modal-image').on('load', function(e) {
+                jQuery('body').addClass('modal-open');
+                jQuery('.image-modal-overlay').show();
+                jQuery('.image-modal-wrapper').show();
+             });
+            jQuery(this).dequeue();
+        });
+
+
+        jQuery('.benefits-graph img, .use-case-items .third-item img, .BlogContent .left .body-text img, .BlogContent .left .image img').on('mousedown', function(){
+            
+            const imageSrcset =  jQuery(this).attr('srcset');
+            const imageSrcsetArray = imageSrcset.split(",");
+            let lastSrcset = imageSrcsetArray[imageSrcsetArray.length - 1].trim();
+            lastSrcset = lastSrcset.substring(0, lastSrcset.indexOf(" "));      
+
+            jQuery('.image-modal-image').attr('src', lastSrcset);
+  
+        });
+
+        jQuery('.image-modal-close').on('click', function(){
+            jQuery('body').removeClass('modal-open');
+            jQuery('.image-modal-overlay').hide();
+            jQuery('.image-modal-wrapper').hide();
+        });
+
+        jQuery('.image-modal-wrapper').on('click', function(){
+            jQuery('body').removeClass('modal-open');
+            jQuery('.image-modal-overlay').hide();
+            jQuery('.image-modal-wrapper').hide();
+        });
+
+    }
+
+})();
